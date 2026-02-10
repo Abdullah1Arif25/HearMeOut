@@ -1,0 +1,255 @@
+.login-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #2b0d2b 0%, #6d2a46 100%);
+  padding: 1rem;
+}
+
+.login-card {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 194, 194, 0.18),
+    #936480
+  );
+  backdrop-filter: blur(12px);
+  border-radius: 45px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.title {
+  font-family: "Noto Serif Ethiopic", serif;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+  margin-bottom: 0;
+}
+
+.form-label {
+  color: #f8e7f2;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.form-control {
+  background: rgba(43, 13, 43, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 25px;
+  color: white;
+  padding: 0.75rem 1.25rem;
+  height: 48px;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  background: rgba(43, 13, 43, 0.7);
+  border-color: rgba(255, 194, 194, 0.5);
+  color: white;
+  box-shadow: 0 0 0 0.25rem rgba(255, 194, 194, 0.25);
+}
+
+.form-control::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.login-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  background: rgba(43, 13, 43, 0.3);
+  border-radius: 25px;
+  padding: 0.5rem;
+}
+
+.toggle-option {
+  color: rgba(255, 255, 255, 0.6);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1;
+  text-align: center;
+}
+
+.toggle-option.active {
+  background: rgba(255, 194, 194, 0.2);
+  color: white;
+  font-weight: 500;
+}
+
+.toggle-option:hover:not(.active) {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.divider {
+  color: rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+}
+
+.login-btn {
+  width: 100%;
+  max-width: 320px; 
+  background: linear-gradient(135deg, #f8f6f7 0%, #e6e1e3 100%);
+  color: #3a0f2a;
+  border: none;
+  border-radius: 25px;
+  padding: 0.875rem;
+  font-weight: 600;
+  font-size: 1rem;
+  height: 48px;
+  transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 194, 194, 0.32),
+    #a77b99
+  );
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.forgot-password-link {
+  color: #ead6e3;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.3s ease;
+}
+
+.forgot-password-link:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+.register-link {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+}
+
+.register-link a {
+  color: #f8e7f2;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.register-link a:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+.error {
+  color: #ffb4b4;
+  font-size: 0.875rem;
+  padding: 0.5rem;
+  background: rgba(255, 180, 180, 0.1);
+  border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .login-card {
+    padding: 1.5rem;
+    border-radius: 20px;
+  }
+  
+  .login-wrapper {
+    padding: 0.5rem;
+  }
+  
+  .title {
+    font-size: 1.75rem;
+  }
+  
+  .subtitle {
+    font-size: 0.875rem;
+  }
+  
+  .form-control {
+    height: 44px;
+    padding: 0.625rem 1rem;
+  }
+  
+  .login-btn {
+    height: 44px;
+    font-size: 0.9375rem;
+  }
+  
+  .login-toggle {
+    padding: 0.375rem;
+  }
+  
+  .toggle-option {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+  }
+}
+
+
+@media (min-width: 768px) {
+  .login-card {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 3rem;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+  }
+  
+  .subtitle {
+    font-size: 1.125rem;
+  }
+  
+  /* Horizontal layout for larger screens */
+  .login-card .row:first-child {
+    margin-bottom: 2.5rem;
+  }
+}
+
+
+@media (min-width: 1400px) {
+  .login-card {
+    max-width: 700px;
+    padding: 4rem;
+  }
+  
+  .title {
+    font-size: 3rem;
+  }
+}
+
+
+@media (max-width: 768px) and (max-height: 375px) and (orientation: landscape) {
+  .login-wrapper {
+    padding: 0.25rem;
+  }
+  
+  .login-card {
+    padding: 1rem;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  .row {
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .form-control {
+    height: 40px;
+    padding: 0.5rem 0.875rem;
+  }
+  
+  .login-btn {
+    height: 40px;
+    padding: 0.5rem;
+  }
+}

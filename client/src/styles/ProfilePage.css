@@ -1,0 +1,185 @@
+.profile-wrapper {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(90deg, #2b0d2b, #6d2a46);
+}
+
+
+.profile-card {
+  padding: 55px 50px;
+    border-radius: 45px;
+    background: linear-gradient(90deg, rgba(255, 194, 194, 0.18), #936480);
+    backdrop-filter: blur(12px);
+    text-align: center;
+    color: white;
+    
+}
+
+.title {
+  font-family: "Noto Serif Ethiopic", serif;
+  margin-bottom: 30px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: center;
+}
+
+.form button {
+  width: 100%;
+  max-width: 320px; 
+  background: linear-gradient(135deg, #f8f6f7 0%, #e6e1e3 100%);
+  color: #3a0f2a;
+  border: none;
+  border-radius: 25px;
+  padding: 0.875rem;
+  font-weight: 600;
+  font-size: 1rem;
+  height: 48px;
+  transition: all 0.3s ease;
+}
+
+select {
+  width: 100%;
+  padding: 15px;
+  border-radius: 50px !important;
+  border: none;
+  background: #fadde8;
+  color: #2b0d2b;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper::after {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6d2a46;
+  pointer-events: none;
+  font-size: 16px;
+}
+
+.input-group label {
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: #f8e7f2;
+}
+
+.input-group input {
+  width: 100%;
+  height: 50px;
+  border-radius: 100px !important;
+  padding: 0 20px;
+  border: none;
+  background: linear-gradient(90deg, #2b0d2b, #6d2a46);
+  color: white;
+}
+
+.confirm-btn {
+  width: 50%;
+    border-radius: 50px;
+    background: #f8f6f7;
+    color: #3a0f2a;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.confirm-btn:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 194, 194, 0.32),
+    #a77b99
+  );
+}
+
+.error {
+  color: #ffb4b4;
+  font-size: 16px;
+}
+
+.success {
+  color: #3a0f2a;;
+  font-size: 16px;
+}
+
+.setting-btn {
+  width: 100%;
+  padding: 18px 0;
+  border-radius: 50px;
+  background: #f8f6f7;
+  color: #3a0f2a;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: 0.25s ease;
+  margin-bottom: 25px;
+}
+
+.setting-btn:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 194, 194, 0.32),
+    #a77b99
+  );
+}
+
+/* This is for small screens */
+@media (max-width: 480px) {
+  .title {
+  font-family: "Noto Serif Ethiopic", serif;
+  letter-spacing: 1px;
+  }
+}
+
+/* This is for landscape mode */
+@media (min-width: 768px), (max-height: 500px) {
+
+  .profile-card {
+    max-width: 760px;
+    padding: 45px 50px;
+  }
+
+  .inputs-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    align-items: end;
+  }
+
+  .confirm-btn {
+    max-width: 320px;
+    margin-top: 20px;
+  }
+
+  .title {
+  font-family: "Noto Serif Ethiopic", serif;
+  letter-spacing: 1px;
+  }
+
+  .subtitle {
+    font-size: clamp(14px, 3.5vw, 18px);
+    margin-bottom: 20px;
+    color: #ead6e3;
+  }
+
+}

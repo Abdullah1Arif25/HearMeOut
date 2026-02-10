@@ -1,0 +1,86 @@
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(
+    90deg,
+    #2b0d2b,
+    #6d2a46
+  );
+}
+
+.card {
+  max-width: 480px;
+  width: 100%;
+  padding: 40px 50px;
+  border-radius: 40px;
+  background: linear-gradient(135deg,rgba(255, 194, 194, 0.18),#936480);
+  backdrop-filter: blur(12px);
+  text-align: left;
+  color:white;
+}
+
+.topBar {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 20px;
+} 
+
+.title {
+  font-family: "Noto Serif Ethiopic", serif;
+  font-size: 38px;
+  font-weight: 700;
+  margin-bottom: 18px;
+  color: white;
+  text-align: center;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 22px;
+}
+
+.backButton {
+  background: #f6e3ea;
+  color: #6d2a46;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.form-control,
+.form-select {
+  width: 100%;
+  height: 56px;
+  padding: 0 22px;
+  border-radius: 999px !important;
+  border: none !important;
+  background: #fadde8 !important;
+  color: #2b0d2b;
+  font-size: 16px;
+  box-sizing: border-box;
+  appearance: none;
+  box-shadow: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.btn-submit {
+  width: 70%;
+  height: 50px;
+  margin-top: 25px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg,#2b0d2b,#6d2a46);
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  display: block; 
+  margin: 30px auto 0; 
+}

@@ -1,0 +1,4124 @@
+{
+	"info": {
+		"_postman_id": "3da6f0c1-d220-46c5-8c13-7957a7b6a31b",
+		"name": "HMO Backend MS1 Copy 3",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50012690",
+		"_collection_link": "https://gusattai-9661558.postman.co/workspace/Webb-group-9's-Workspace~3a853755-5fbd-4739-8469-a1a4650c5a2c/collection/49982966-3da6f0c1-d220-46c5-8c13-7957a7b6a31b?action=share&source=collection_link&creator=50012690"
+	},
+	"item": [
+		{
+			"name": "User entity tests",
+			"item": [
+				{
+					"name": "User Register",
+					"item": [
+						{
+							"name": "POST Create User",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.set(\"userId\", \"user\" + Math.floor(Math.random() * 1000000000) + 1);\r",
+											"\r",
+											"function generateRandomPersonalNumber() {\r",
+											"  // Random birth year: 1950–2006 (age ≥ 18)\r",
+											"  const year = Math.floor(Math.random() * (2006 - 1950 + 1)) + 1950;\r",
+											"  const yy = String(year).slice(2);\r",
+											"\r",
+											"  // Random month 01–12\r",
+											"  const mm = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');\r",
+											"\r",
+											"  // Random day 01–28 (safe to avoid invalid dates)\r",
+											"  const dd = String(Math.floor(Math.random() * 28) + 1).padStart(2, '0');\r",
+											"\r",
+											"  // Random 4-digit sequence\r",
+											"  const last4 = String(1000 + Math.floor(Math.random() * 9000));\r",
+											"\r",
+											"  return `${yy}${mm}${dd}${last4}`; // returns 10-digit string\r",
+											"}\r",
+											"\r",
+											"pm.collectionVariables.set(\"personalNumber\", generateRandomPersonalNumber());\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.set(\"userObjectId\", pm.response.json().Object._id);\r",
+											"pm.collectionVariables.set(\"userId\", pm.response.json().Object.userId);\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": \"{{userId}}\",\n  \"personalNumber\": \"{{personalNumber}}\",\n    \"language\": \"swe\",\n  \"password\": \"12313123\"\n}\n\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing Personal Number",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response is 400 personal number is missing\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Correct error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.eql(\"Personal number is required.\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": \"{{userId}}\",\n  \"personalNumber\": \"\",\n  \"language\": \"en\",\n  \"password\": \"12345678\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Personal Number not 10 digits",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response is 400 because personalNumber is not 10 digits\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Correct error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.eql(\"Personal number must be 10 digits.\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": \"{{userId}}\",\n  \"personalNumber\": \"012345678\",\n  \"language\": \"en\",\n  \"password\": \"12345678\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Less than 18",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response is 400 user is under 18\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Correct error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.eql(\"User must be at least 18 years old.\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": \"{{userId}}\",\n  \"personalNumber\": \"0834566897\",\n  \"language\": \"en\",\n  \"password\": \"12345678\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid month",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response is 400 invalid month\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Correct error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.eql(\"Invalid month in personal number.\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": \"{{userId}}\",\n  \"personalNumber\": \"0534566897\",\n  \"language\": \"en\",\n  \"password\": \"12345678\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid day",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response is 400 invalid day\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Correct error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.eql(\"Invalid day in personal number.\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": \"{{userId}}\",\n  \"personalNumber\": \"0512566897\",\n  \"language\": \"en\",\n  \"password\": \"12345678\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Missing password",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response is 400 because password is missing\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Correct error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.eql(\"Password is required.\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": \"{{userId}}\",\n  \"personalNumber\": \"0406127897\",\n  \"language\": \"en\",\n  \"password\": \"\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Password not 8 characters",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response is 400 because password is not 8 characters\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Correct error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.eql(\"Password must be 8 characters.\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": \"{{userId}}\",\n  \"personalNumber\": \"0406127897\",\n  \"language\": \"en\",\n  \"password\": \"1234567\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"register"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "User Login",
+					"item": [
+						{
+							"name": "check login",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": \"{{userId}}\",\n  \"personalNumber\": \"{{personalNumber}}\",\n  \"password\": \"{{password}}\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Password is missing",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response is 400 password is missing\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Returns correct error message\", function () {",
+											"    const body = pm.response.json();",
+											"    pm.expect(body.message).to.eql(\"Password is required.\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": \"{{userId}}\",\n  \"password\": \"\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User not found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response is 404 user does not exist\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											"",
+											"pm.test(\"Returns correct error message\", function () {",
+											"    const body = pm.response.json();",
+											"    pm.expect(body.message).to.eql(\"User does not exist.\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const randomUserId = \"user\" + Math.floor(Math.random() * 1000000);\r",
+											"pm.collectionVariables.set(\"randomUserId\", randomUserId);"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": \"{{randomUserId}}\",\n  \"password\": \"12345678\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Wrong password",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response is 401 password is incorrect\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"pm.test(\"Returns correct error message\", function () {",
+											"    const body = pm.response.json();",
+											"    pm.expect(body.message).to.eql(\"Incorrect Password.\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.set(\"newuserId\", pm.collectionVariables.get(\"userId\"));"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"userId\": \"{{userId}}\",\n  \"password\": \"12345679\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"login"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Get user",
+					"item": [
+						{
+							"name": "GET By UserId",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status is 200 for existing user\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Response contains correct user fields\", function () {",
+											"    const user = pm.response.json();",
+											"    pm.expect(user).to.have.property(\"userId\");",
+											"    pm.expect(user).to.have.property(\"personalNumber\");",
+											"    pm.expect(user).to.have.property(\"language\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/{{userId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"{{userId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User not found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response is 404 user not found\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											"",
+											"pm.test(\"Correct not found message\", function () {",
+											"    const body = pm.response.json();",
+											"    pm.expect(body.message).to.eql(\"User does not exist\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const randomUserId = \"userId\"+ Math.floor(Math.random() * 1000000);\r",
+											"pm.collectionVariables.set(\"randomUserId\", randomUserId);"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/{{randomUserId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"{{randomUserId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all users",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Update user",
+					"item": [
+						{
+							"name": "PATCH Update by Id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response 404 user not found\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											"",
+											"pm.test(\"Correct error message\", function () {",
+											"    pm.expect(pm.response.json().message).to.eql(\"User does not exist.\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"language\": \"sw\",\n  \"password\": \"12345699\"\n}\n\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/{{randomUserId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"{{randomUserId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Language is empty",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response 400 for empty language\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"pm.test(\"Correct message\", function () {",
+											"    pm.expect(pm.response.json().message).to.eql(\"Language cannot be empty.\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"language\": \"\",\n  \"password\": \"12345678\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/{{userId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"{{userId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Password is empty",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response is 400 empty password\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"pm.test(\"Correct message\", function () {",
+											"    pm.expect(pm.response.json().message).to.eql(\"Password cannot be empty.\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"language\": \"en\",\n  \"password\": \"\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/{{userId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"{{userId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Password length invalid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response is 400 invalid password length\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"pm.test(\"Correct message\", function () {",
+											"    pm.expect(pm.response.json().message).to.eql(\"Password must be 8 characters.\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"language\": \"en\",\n  \"password\": \"12345\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/{{userId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"{{userId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update language",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response is 200 for successful update\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Success message\", function () {",
+											"    pm.expect(pm.response.json().message).to.eql(\"Success\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"language\": \"sv\",\n  \"password\": \"12345678\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/{{userId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"{{userId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update password",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response is 200 for successful password update\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"pm.test(\"Success message\", function () {",
+											"    pm.expect(pm.response.json().message).to.eql(\"Success\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"language\": \"sv\",\n  \"password\": \"12345688\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/{{userId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"{{userId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Delete user",
+					"item": [
+						{
+							"name": "DELETE by ID",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/noise",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"noise"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User not found",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response is 404 user does not exist\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											"",
+											"pm.test(\"Correct error message\", function () {",
+											"    const body = pm.response.json();",
+											"    pm.expect(body.message).to.eql(\"User does not exist\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/v1/users/noise",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"users",
+										"noise"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Local Room entity tests",
+			"item": [
+				{
+					"name": "Create Local Room",
+					"item": [
+						{
+							"name": "Create Local room",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    let jsonBody = pm.response.json();\r",
+											"    pm.expect(jsonBody).to.have.property('Object');\r",
+											"    pm.expect(jsonBody.Object).to.have.property('_id');\r",
+											"    pm.collectionVariables.set(\"LocalRoomObjectId\", jsonBody.Object._id);\r",
+											"    \r",
+											"\r",
+											"    pm.response.to.have.status(201);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const randomLocalRoomID = \"localroom\" + Math.floor(Math.random() *10000) +1;",
+											"",
+											"pm.collectionVariables.set(\"RandomLocalRoomId\", randomLocalRoomID);",
+											"",
+											"pm.test(\"request body includes the required fields\", function () {",
+											"    const body = pm.request.body.raw;",
+											"",
+											"    pm.expect(body).to.include(\"roomId\");",
+											"    pm.expect(body).to.include(\"country\");",
+											"    pm.expect(body).to.include(\"liveChat\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"roomId\": \"{{RandomLocalRoomId}}\",\r\n  \"country\": \"Sweden\",\r\n  \"liveChat\": true\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/localrooms",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"localrooms"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Get Local Room",
+					"item": [
+						{
+							"name": "Local All Room",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"  const listBody = pm.response.json();\r",
+											"\r",
+											"  pm.expect(listBody).to.be.an(\"array\");\r",
+											"  pm.expect(listBody.length).to.be.above(0);\r",
+											"\r",
+											"  listBody.forEach(item => {\r",
+											"    pm.expect(item).to.have.property(\"_id\");\r",
+											"  });\r",
+											"\r",
+											"  const objectIds = listBody.map(item => item._id);\r",
+											"  const randomObjectId = objectIds[Math.floor(Math.random() * objectIds.length)];\r",
+											"\r",
+											"  pm.collectionVariables.set(\"LocalRoomId\", randomObjectId);\r",
+											"\r",
+											"  pm.response.to.have.status(200);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/v1/localrooms",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"localrooms"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Update Local Room",
+					"item": [
+						{
+							"name": "Update chat",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.set(\"LoclRoomId\", pm.collectionVariables.get(\"LocalRoomId\")); ",
+											"",
+											"pm.test(\"PATCH body includes an update field\", function () {",
+											"    const body = pm.request.body.raw;",
+											"",
+											"    pm.expect(body.length).to.be.above(2);",
+											"",
+											"    const hasField =",
+											"        body.includes(\"roomId\") ||",
+											"        body.includes(\"country\") ||",
+											"        body.includes(\"topicDropdown\") ||",
+											"        body.includes(\"liveChat\");",
+											"",
+											"    pm.expect(hasField).to.eql(true);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"roomId\": \"123\",\r\n  \"country\":\"sweden\",\r\n  \"liveChat\": false\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/localrooms/{{LocalRoomId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"localrooms",
+										"{{LocalRoomId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid Live Chat",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Response body contains error message\", function () { \r",
+											"    pm.expect(pm.response.json().message).to.include(\"liveChat must be true or false\")\r",
+											" })"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.set(\"LoclRoomId\", pm.collectionVariables.get(\"LocalRoomId\")); ",
+											"",
+											"pm.test(\"PATCH body includes an update field\", function () {",
+											"    const body = pm.request.body.raw;",
+											"",
+											"    pm.expect(body.length).to.be.above(2);",
+											"",
+											"    const hasField =",
+											"        body.includes(\"roomId\") ||",
+											"        body.includes(\"country\") ||",
+											"        body.includes(\"topicDropdown\") ||",
+											"        body.includes(\"liveChat\");",
+											"",
+											"    pm.expect(hasField).to.eql(true);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"roomId\": \"123\",\r\n  \"country\":\"Sweden\",\r\n  \"liveChat\": \"\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/localrooms/{{LocalRoomId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"localrooms",
+										"{{LocalRoomId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Delete Local Room",
+					"item": [
+						{
+							"name": "Delete Room",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/v1/localrooms/{{LocalRoomId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"localrooms",
+										"{{LocalRoomId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Global entity tests",
+			"item": [
+				{
+					"name": "Create Global room",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const randomGlobalRoomID = \"globalroom\" + Math.floor(Math.random() *10000) +1;",
+									"",
+									"pm.collectionVariables.set(\"RandomGlobalRoomId\", randomGlobalRoomID);",
+									"",
+									"pm.test(\"request body includes the required fields\", function () {",
+									"    var body = pm.request.body.raw;",
+									"",
+									"    pm.expect(body).to.include(\"room_Id\");",
+									"    pm.expect(body).to.include(\"live_Chat\");",
+									"    pm.expect(body).to.include(\"topic_Dropdown\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    let jsonBody = pm.response.json();\r",
+									"    pm.expect(jsonBody).to.have.property('Object');\r",
+									"    let objectJsonBody = jsonBody.Object;\r",
+									"    pm.collectionVariables.set(\"GlobalRoomObjectId\", objectJsonBody._id);\r",
+									"\r",
+									"    pm.response.to.have.status(201);\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n    \"room_Id\": \"{{RandomGlobalRoomId}}\",      \n    \"live_Chat\": true,    \n    \"topic_Dropdown\":\"School\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/globalrooms/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"globalrooms",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Global Room",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Have correct room_Id\", function () {",
+									"    pm.expect(pm.response.json().room_Id)",
+									"      .to.eql(pm.collectionVariables.get(\"globalRoomId\"));",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"globalRoomId\", pm.collectionVariables.get(\"RandomGlobalRoomId\"));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/globalrooms/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"globalrooms",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update chat",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"response should have valid JSON data\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property(\"Object\");",
+									"    const ObjectJson = jsonData.Object;",
+									"    pm.expect(ObjectJson.live_Chat).to.eql(false);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n    \"room_Id\": \"{{globalRoomId}}\",      \n    \"live_Chat\": false\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/globalrooms/{{RandomGlobalRoomId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"globalrooms",
+								"{{RandomGlobalRoomId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Room",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/v1/globalrooms/{{RandomGlobalRoomId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"globalrooms",
+								"{{RandomGlobalRoomId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Branching Room entity tests",
+			"item": [
+				{
+					"name": "Create Branching Room",
+					"item": [
+						{
+							"name": "Create Branching room",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"\r",
+											"// Randomly generate an Branching room id for automated tests\r",
+											"const randomBranchingRoomId = \"branchingRoom\"+Math.floor(Math.random()*100000000000)+1;\r",
+											"pm.collectionVariables.set(\"randomBranchingRoomId\", randomBranchingRoomId);\r",
+											"\r",
+											"// Randomly Select a valid room topic for automated testing.\r",
+											"const validRoomTopic = [\r",
+											"    \"General\", \"Scandle\", \"Relationships\", \"Travel\",\r",
+											"    \"Movies\", \"Books\", \"Sports\", \"Food\", \"School\"\r",
+											"];\r",
+											"\r",
+											"\r",
+											"const randomRoopTopic = validRoomTopic[Math.floor(Math.random() * validRoomTopic.length)];\r",
+											"\r",
+											"pm.collectionVariables.set(\"randomRoomTopic\", randomRoopTopic);\r",
+											"\r",
+											"// Randomly Select a Local or Global Room type for automated testing\r",
+											"const validRoomType = [\"LocalRoom\", \"GlobalRoom\"];\r",
+											"const randomRoomType = validRoomType[Math.floor(Math.random() * validRoomType.length)];\r",
+											"\r",
+											"pm.collectionVariables.set(\"branchingRoomType\", randomRoomType);\r",
+											"\r",
+											"if(randomRoomType === \"LocalRoom\"){\r",
+											"    pm.collectionVariables.set(\"RoomObjectId\", pm.collectionVariables.get(\"LocalRoomObjectId\"));\r",
+											"} else {\r",
+											"    pm.collectionVariables.set(\"RoomObjectId\", pm.collectionVariables.get(\"GlobalRoomObjectId\"));\r",
+											"}\r",
+											"\r",
+											"\r",
+											"\r",
+											"pm.test\r",
+											"(\"Check if the all the required fields are available in the request body\", ()=>{\r",
+											"    pm.expect(pm.request.body.raw).to.include(\"branchingRoomId\");\r",
+											"    pm.expect(pm.request.body.raw).to.include(\"roomTopic\");\r",
+											"    pm.expect(pm.request.body.raw).to.include(\"branchingRoomType\");\r",
+											"    pm.expect(pm.request.body.raw).to.include(\"parentRoomId\");\r",
+											"\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check if the branchingRoomId is unique\", () => {\r",
+											"    const jsonBody = JSON.parse(pm.request.body.raw);\r",
+											"    pm.expect(jsonBody.branchingRoomId).to.not.equal(pm.globals.get(\"branchingRoomId\"));\r",
+											"    \r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"The response status code is 201\", function () {\r",
+											"    const jsonBody = pm.response.json();\r",
+											"    pm.expect(jsonBody).to.have.property(\"Object\");\r",
+											"    pm.expect(jsonBody.Object).to.have.property(\"branchingRoomId\");\r",
+											"    pm.collectionVariables.set(\"branchingRoomId\", jsonBody.Object.branchingRoomId);\r",
+											"    pm.collectionVariables.set(\"branchingRoomObjectId\", jsonBody.Object._id);\r",
+											"    pm.response.to.have.status(201);\r",
+											"})\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"branchingRoomId\": \"{{randomBranchingRoomId}}\",\r\n  \"roomTopic\": \"{{randomRoomTopic}}\",\r\n  \"branchingRoomType\": \"{{branchingRoomType}}\",\r\n  \"parentRoomId\":\"{{RoomObjectId}}\"\r\n}\r\n\r\n\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/branchingrooms",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"branchingrooms"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid Room Topic",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", ()=>{\r",
+											"    pm.expect(pm.response.code).to.eql(400);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Response Message must be valid\", ()=>{\r",
+											"    pm.expect(pm.response.json().message).to.eql(\"Invalid Branching Room Topic\");\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"branchingRoomId\": \"123456\",\r\n  \"roomTopic\": \"Something\",\r\n  \"branchingRoomType\": \"LocalRoom\",\r\n  \"parentRoomId\":\"691de40651d9d19b5aa34b78\" \r\n}\r\n\r\n\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/branchingrooms",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"branchingrooms"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid Room Type",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", ()=>{\r",
+											"    pm.expect(pm.response.code).to.eql(400);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Response Message must be valid\", ()=>{\r",
+											"    pm.expect(pm.response.json().message).to.eql(\"Invalid Branching Room Type\");\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"branchingRoomId\": \"123456\",\r\n  \"roomTopic\": \"Food\",\r\n  \"branchingRoomType\": \"\",\r\n  \"parentRoomId\":\"691de40651d9d19b5aa34b78\" \r\n}\r\n\r\n\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/branchingrooms",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"branchingrooms"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Duplicate Branching room",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"\r",
+											"// Randomly generate an Branching room id for automated tests\r",
+											"const randomBranchingRoomId = \"branchingRoom\"+Math.floor(Math.random()*100000000000)+1;\r",
+											"pm.collectionVariables.set(\"randomBranchingRoomId\", randomBranchingRoomId);\r",
+											"\r",
+											"\r",
+											"pm.test\r",
+											"(\"Check if the all the required fields are available in the request body\", ()=>{\r",
+											"    pm.expect(pm.request.body.raw).to.include(\"branchingRoomId\");\r",
+											"    pm.expect(pm.request.body.raw).to.include(\"roomTopic\");\r",
+											"    pm.expect(pm.request.body.raw).to.include(\"branchingRoomType\");\r",
+											"    pm.expect(pm.request.body.raw).to.include(\"parentRoomId\");\r",
+											"\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Check if the branchingRoomId is unique\", () => {\r",
+											"    const jsonBody = JSON.parse(pm.request.body.raw);\r",
+											"    pm.expect(jsonBody.branchingRoomId).to.not.equal(pm.globals.get(\"branchingRoomId\"));\r",
+											"    \r",
+											"})\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Branching Room Already Exist\", ()=>{\r",
+											"    pm.expect(pm.response.json().message).to.eql(\"Branching Room Already Exist\");\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"branchingRoomId\": \"{{randomBranchingRoomId}}\",\r\n  \"roomTopic\": \"{{randomRoomTopic}}\",\r\n  \"branchingRoomType\": \"{{branchingRoomType}}\",\r\n  \"parentRoomId\":\"{{RoomObjectId}}\"\r\n}\r\n\r\n\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/branchingrooms",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"branchingrooms"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Get Branching Rooms",
+					"item": [
+						{
+							"name": "All Branching Room",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const listOfValidRoomTypes = [\"LocalRoom\", \"GlobalRoom\"];\r",
+											"const randomRoomType = listOfValidRoomTypes[Math.floor(Math.random*listOfValidRoomTypes)] || \"LocalRoom\";\r",
+											"pm.collectionVariables.set(\"roomType\", randomRoomType);"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function(){\r",
+											"    pm.response.to.have.status(200)}\r",
+											");\r",
+											"\r",
+											"pm.test(\"Response is an array\", ()=>{\r",
+											"    let jsonBody = pm.response.json();\r",
+											"    pm.expect(jsonBody).to.property('Body');\r",
+											"    pm.expect(jsonBody.Body).to.be.an('array');\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response Item should have the described fields\", () => {\r",
+											"    const queryObject = pm.request.url.query.toObject();\r",
+											"\r",
+											"    if (!queryObject.fields) {\r",
+											"        console.log(\"No ?fields param provided. Skipping field assertion.\");\r",
+											"        return;\r",
+											"    }\r",
+											"\r",
+											"    const fields = queryObject.fields.split(',');\r",
+											"\r",
+											"    const jsonResponse = pm.response.json();\r",
+											"\r",
+											"    pm.expect(jsonResponse).to.have.property(\"Body\");\r",
+											"    const jsonBody = jsonResponse.Body;\r",
+											"\r",
+											"    jsonBody.forEach(item => {\r",
+											"        fields.forEach(field => {\r",
+											"            pm.expect(item).to.have.property(field);\r",
+											"        });\r",
+											"    });\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/v1/branchingrooms/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"branchingrooms",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "All Branching Room with Query Params",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const listOfValidRoomTypes = [\"LocalRoom\", \"GlobalRoom\"];\r",
+											"const randomRoomType = listOfValidRoomTypes[Math.floor(Math.random*listOfValidRoomTypes)] || \"LocalRoom\";\r",
+											"pm.collectionVariables.set(\"roomType\", randomRoomType);"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function(){\r",
+											"    pm.response.to.have.status(200)}\r",
+											");\r",
+											"\r",
+											"pm.test(\"Response is an array\", ()=>{\r",
+											"    let jsonBody = pm.response.json();\r",
+											"    pm.expect(jsonBody).to.property('Body');\r",
+											"    pm.expect(jsonBody.Body).to.be.an('array');\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response Item should have the described fields \", ()=>{\r",
+											"    const queryObject = pm.request.url.query.toObject();\r",
+											"    console.log(queryObject);\r",
+											"    const fields = queryObject.fields.split(',');\r",
+											"\r",
+											"    const jsonResponse = pm.response.json();\r",
+											"    pm.expect(jsonResponse).to.have.property(\"Body\");\r",
+											"    const jsonBody = jsonResponse.Body;\r",
+											"    jsonBody.forEach(item => {\r",
+											"        fields.forEach(field => {\r",
+											"            pm.expect(item).to.have.property(field);\r",
+											"    });\r",
+											"\r",
+											"})\r",
+											"})\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/v1/branchingrooms/?branchingRoomType={{roomType}}&fields=branchingRoomId,branchingRoomType&sort=-createdAt",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"branchingrooms",
+										""
+									],
+									"query": [
+										{
+											"key": "branchingRoomType",
+											"value": "{{roomType}}"
+										},
+										{
+											"key": "fields",
+											"value": "branchingRoomId,branchingRoomType"
+										},
+										{
+											"key": "sort",
+											"value": "-createdAt"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Single Branching Room",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.set(\"branchingRoomId\", pm.collectionVariables.get(\"branchingRoomId\"));\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/v1/branchingrooms/{{branchingRoomId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"branchingrooms",
+										"{{branchingRoomId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Join Room",
+					"item": [
+						{
+							"name": "Join Room",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.collectionVariables.set(\"userId\", pm.collectionVariables.get(\"userId\"));\r",
+											"pm.collectionVariables.set(\"randomBranchingRoomId\", pm.collectionVariables.get(\"randomBranchingRoomId\"));\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\":\"{{userId}}\" , \r\n    \"roomId\":\"{{randomBranchingRoomId}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/branchingrooms/join",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"branchingrooms",
+										"join"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Create a Message in a Branching Room",
+					"item": [
+						{
+							"name": "Create A Message Branching room",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"// Header Assertion Example\r",
+											"pm.test(\"Content-Type header is present and has value 'application/json'\", \r",
+											"    function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+											"});\r",
+											"\r",
+											"let jsonBody = pm.response.json();\r",
+											"pm.expect(jsonBody).to.have.property(\"Object\");\r",
+											"pm.expect(jsonBody.Object).to.have.property(\"messageId\");\r",
+											"pm.collectionVariables.set(\"messageId\", jsonBody.Object.messageId);\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"\r",
+											"//Generate random messageId on every call.\r",
+											"const randomMessageId = \"messageId\" + Math.floor(Math.random() * 1000) + 1;\r",
+											"pm.collectionVariables.set(\"randomMessageId\", randomMessageId);\r",
+											"\r",
+											"pm.collectionVariables.get(\"userObjectId\")\r",
+											"//Check if the all the required fields are available in the request body.\r",
+											"pm.test\r",
+											"(\"Check if the all the required fields are available in the request body\", ()=>{\r",
+											"    pm.expect(pm.request.body.raw).to.include(\"messageId\");\r",
+											"    pm.expect(pm.request.body.raw).to.include(\"Body\");\r",
+											"    pm.expect(pm.request.body.raw).to.include(\"Sender\");\r",
+											"})\r",
+											"\r",
+											"\r",
+											"// Check if the reaction is a valid string\r",
+											"pm.test(\"The Reaction should be valid \", ()=>{\r",
+											"    const validReactions = ['👍', '❤️', '😂', '😢', '😡', null];\r",
+											"    const rawJson = pm.request.body.raw;\r",
+											"    const jsonBody = JSON.parse(rawJson);\r",
+											"    pm.expect(jsonBody.Reaction).to.be.oneOf(validReactions);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"messageId\": \"{{randomMessageId}}\",\r\n  \"Body\": \"I am also a part of the thread\",\r\n  \"SendTimestamp\": \"2025-11-19T01:47:00.000Z\",\r\n  \"Reaction\": \"😂\",\r\n  \"ResponseIds\": [],\r\n  \"Sender\": \"{{userObjectId}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/branchingrooms/{{randomBranchingRoomId}}/messages/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"branchingrooms",
+										"{{randomBranchingRoomId}}",
+										"messages",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Create A Response Message for a Message in a branching room",
+					"item": [
+						{
+							"name": "Create A Message Branching room",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"// Header Assertion Example\r",
+											"pm.test(\"Content-Type header is present and has value 'application/json'\", \r",
+											"    function () {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"\r",
+											"//Generate random messageId on every call.\r",
+											"const randomMessageId = \"messageId\" + Math.floor(Math.random() * 1000) + 1;\r",
+											"pm.collectionVariables.set(\"randomMessageId\", randomMessageId);\r",
+											"\r",
+											"//Check if the all the required fields are available in the request body.\r",
+											"pm.test\r",
+											"(\"Check if the all the required fields are available in the request body\", ()=>{\r",
+											"    pm.expect(pm.request.body.raw).to.include(\"messageId\");\r",
+											"    pm.expect(pm.request.body.raw).to.include(\"Body\");\r",
+											"    pm.expect(pm.request.body.raw).to.include(\"Sender\");\r",
+											"})\r",
+											"\r",
+											"\r",
+											"// Check if the reaction is a valid string\r",
+											"pm.test(\"The Reaction should be valid \", ()=>{\r",
+											"    const validReactions = ['👍', '❤️', '😂', '😢', '😡', null];\r",
+											"    const rawJson = pm.request.body.raw;\r",
+											"    const jsonBody = JSON.parse(rawJson);\r",
+											"    pm.expect(jsonBody.Reaction).to.be.oneOf(validReactions);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"messageId\": \"{{randomMessageId}}\",\r\n  \"Body\": \"I am also a part of the thread\",\r\n  \"SendTimestamp\": \"2025-11-19T01:47:00.000Z\",\r\n  \"Reaction\": \"😂\",\r\n  \"ResponseIds\": [],\r\n  \"Sender\": \"{{userObjectId}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/branchingrooms/{{randomBranchingRoomId}}/messages/{{messageId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"branchingrooms",
+										"{{randomBranchingRoomId}}",
+										"messages",
+										"{{messageId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Create A Reaction for a Message in a branching room",
+					"item": [
+						{
+							"name": "Create A Reaction in a branching room",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"  pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const body = pm.response.json();",
+											"",
+											"const reaction = pm.collectionVariables.get(\"reaction\");",
+											"pm.test(\"Reaction was saved\", () => {",
+											"  pm.expect(body.Object).to.have.property(\"Reactions\");",
+											"  const listOfReactions = body.Object.Reactions;",
+											"  pm.expect(listOfReactions[0].reaction).to.eql(reaction);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"",
+											"",
+											"// Message ID (example: messageId92551)",
+											"if (!pm.collectionVariables.get(\"messageId\")) {",
+											"    pm.collectionVariables.set(\"messageId\", pm.collectionVariables.get(\"randomMessageId\"));",
+											"}",
+											"",
+											"// User ID (Mongo ObjectId)",
+											"if (!pm.collectionVariables.get(\"userId\")) {",
+											"    pm.collectionVariables.set(\"userId\", pm.collectionVariables.get(\"userObjectId\"));",
+											"}",
+											"",
+											"// Allowed reactions (must match schema enum exactly)",
+											"const reactions = ['👍', '❤️', '😂', '😢', '😡'];",
+											"const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];",
+											"pm.collectionVariables.set(\"reaction\", randomReaction);",
+											"",
+											"// Optional debug",
+											"console.log(\"Random reaction selected:\", randomReaction);",
+											"",
+											"// Log for debugging",
+											"console.log(\"Request URL will be:\", ",
+											"  `/api/v1/branchingrooms/${pm.environment.get(\"roomId\")}/messages/${pm.environment.get(\"messageId\")}/reactions`",
+											");",
+											"console.log(\"Reaction:\", pm.environment.get(\"reaction\"));",
+											"console.log(\"UserId:\", pm.environment.get(\"userId\"));"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\"userId\": \"{{userObjectId}}\",\n\"reaction\": \"{{reaction}}\"\n\n}\n\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/branchingrooms/{{randomBranchingRoomId}}/messages/{{randomMessageId}}/reactions",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"branchingrooms",
+										"{{randomBranchingRoomId}}",
+										"messages",
+										"{{randomMessageId}}",
+										"reactions"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Get Messages inside a Branching room",
+					"item": [
+						{
+							"name": "All Messages in a Branching Room Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Response must have all fields\", ()=>{\r",
+											"    let listOfData = pm.response.json();\r",
+											"    pm.expect(listOfData).to.be.an('array');\r",
+											"    listOfData.forEach(msg=>{\r",
+											"        pm.expect(msg).to.have.property(\"_id\");\r",
+											"        pm.expect(msg).to.have.property(\"messageId\");\r",
+											"        pm.expect(msg).to.have.property(\"Body\");\r",
+											"        pm.expect(msg).to.have.property(\"SendTimestamp\"); \r",
+											"        pm.expect(msg).to.have.property(\"Reactions\"); \r",
+											"        pm.expect(msg).to.have.property(\"ResponseIds\"); \r",
+											"        pm.expect(msg).to.have.property(\"Sender\"); \r",
+											"\r",
+											"\r",
+											"    })\r",
+											"    \r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/v1/branchingrooms/{{randomBranchingRoomId}}/messages",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"branchingrooms",
+										"{{randomBranchingRoomId}}",
+										"messages"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Single Message in a Branching Room Copy",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/v1/branchingrooms/{{randomBranchingRoomId}}/messages/{{messageId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"branchingrooms",
+										"{{randomBranchingRoomId}}",
+										"messages",
+										"{{messageId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Translated message",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/v1/branchingrooms/{{branchingRoomId}}/messages/{{messageId}}/translate?target=sv",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"branchingrooms",
+										"{{branchingRoomId}}",
+										"messages",
+										"{{messageId}}",
+										"translate"
+									],
+									"query": [
+										{
+											"key": "target",
+											"value": "sv"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Update Messages in a Branching Room",
+					"item": [
+						{
+							"name": "Update Branching Room Topic",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.test(\"The Room Topic should be valid \", ()=>{\r",
+											"    const validRoomTopics  = [\"General\", \"Scandle\", \"Relationships\", \"Travel\",\"Movies\", \"Books\", \"Sports\", \"Food\", \"School\"];\r",
+											"    const rawJson = pm.request.body.raw;\r",
+											"    const jsonBody = JSON.parse(rawJson);\r",
+											"    pm.expect(jsonBody.roomTopic).to.be.oneOf(validRoomTopics);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"roomTopic\":\"School\"\r\n    \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/branchingrooms/{{randomBranchingRoomId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"branchingrooms",
+										"{{randomBranchingRoomId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid Room Topic",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Response Body to have message\", function () {\r",
+											"    pm.expect(pm.response.json().message).to.eql(\"Invalid Branching Room Topic\");\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"roomTopic\":\"sometopic\"\r\n    \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/branchingrooms/{{randomBranchingRoomId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"branchingrooms",
+										"{{randomBranchingRoomId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid Room Type",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"})\r",
+											"\r",
+											"pm.test(\"Response Body to have a Invalid Branching Room Type message\", function () {\r",
+											"    pm.expect(pm.response.json().message).to.eql(\"Invalid Branching Room Topic\");\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"branchingRoomType\":\"somethingType\"\r\n    \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/branchingrooms/{{randomBranchingRoomId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"branchingrooms",
+										"{{randomBranchingRoomId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update chat",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.test(\"The Reaction should be valid \", ()=>{\r",
+											"    const validReactions = ['👍', '❤️', '😂', '😢', '😡', null];\r",
+											"    const rawJson = pm.request.body.raw;\r",
+											"    const jsonBody = JSON.parse(rawJson);\r",
+											"    pm.expect(jsonBody.Reaction).to.be.oneOf(validReactions);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Body\":\"This message has been altered four times  \",\r\n    \"Reaction\": \"👍\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/branchingrooms/{{randomBranchingRoomId}}/messages/{{messageId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"branchingrooms",
+										"{{randomBranchingRoomId}}",
+										"messages",
+										"{{messageId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Delete Branching Room",
+					"item": [
+						{
+							"name": "Single Message in a Branching Room",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/v1/branchingrooms/{{branchingRoomId}}/messages/{{messageId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"branchingrooms",
+										"{{branchingRoomId}}",
+										"messages",
+										"{{messageId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Branching Room",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/v1/branchingrooms/{{randomBranchingRoomId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"branchingrooms",
+										"{{randomBranchingRoomId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete All Branching Room",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/v1/branchingrooms/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"branchingrooms",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Messages entity tests",
+			"item": [
+				{
+					"name": "Create Message",
+					"item": [
+						{
+							"name": "Create message in messages",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"//Generate random messageId on every call.\r",
+											"const randomMessageId = \"messageId\" + Math.floor(Math.random() * 1000) + 1;\r",
+											"pm.collectionVariables.set(\"randomMessageId\", randomMessageId);\r",
+											"\r",
+											"\r",
+											"pm.test(\"The Reaction should be valid \", ()=>{\r",
+											"    const validReactions = ['👍', '❤️', '😂', '😢', '😡', null];\r",
+											"    const rawJson = pm.request.body.raw;\r",
+											"    const jsonBody = JSON.parse(rawJson);\r",
+											"    pm.expect(jsonBody.Reaction).to.be.oneOf(validReactions);\r",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"messageId\": \"{{randomMessageId}}\",\n  \"Body\": \"I am also a part of the thread\",\n  \"SendTimestamp\": \"2025-11-19T01:47:00.000Z\",\n  \"Reaction\": \"😂\",\n  \"ResponseIds\": [],\n  \"Sender\": \"{{userObjectId}}\",\n  \"BranchingRoom\": \"{{branchingRoomObjectId}}\"\n}"
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/messages",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"messages"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create the response Message",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status 201\", () => pm.response.to.have.status(201));",
+											"",
+											"let responseData = null;",
+											"try {",
+											"    responseData = pm.response.json();",
+											"} catch (e) {",
+											"    console.warn(\"Response was not valid JSON\");",
+											"}",
+											"",
+											"if (responseData && responseData.Object && responseData.Object.messageId) {",
+											"    pm.collectionVariables.set(\"messageId\", responseData.Object.messageId);",
+											"}",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"//Generate random messageId on every call.",
+											"const randomMessageId = \"messageId\" + Math.floor(Math.random() * 1000);",
+											"pm.collectionVariables.set(\"responseMessageId\", randomMessageId);",
+											"",
+											"",
+											"// Ensure required fields exist in the request body",
+											"const body = pm.request.body.raw;",
+											"",
+											"pm.test(\"Body contains messageId\", () => {",
+											"    pm.expect(body).to.include(\"messageId\");",
+											"});",
+											"",
+											"pm.test(\"Body contains Body text\", () => {",
+											"    pm.expect(body).to.include(\"Body\");",
+											"});",
+											"",
+											"pm.test(\"Body contains Sender\", () => {",
+											"    pm.expect(body).to.include(\"Sender\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"messageId\": \"{{responseMessageId}}\",\n  \"Body\":\"hello\",\n  \"SendTimestamp\": \"2025-11-19T01:45:00.000Z\",\n  \"Reaction\": \"❤️\", \n  \"ResponseIds\": [],\n  \"Sender\": \"{{userObjectId}}\", \n  \"BranchingRoom\": \"{{branchingRoomObjectId}}\"\n}"
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/messages/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"messages",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check text feild",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response is 400 password is missing\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"pm.test(\"Returns correct error message\", function () {",
+											"    const body = pm.response.json();",
+											"    pm.expect(body.message).to.eql(\"Text is required\");",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"// Get the raw request body",
+											"const raw = pm.request.body.raw;",
+											"const body = JSON.parse(raw);",
+											"",
+											"// Check if Body value is empty or missing",
+											"pm.test(\"Check if the request body is in a valid formate\", function () {",
+											"    ",
+											"    pm.expect(body).to.have.property(\"messageId\");",
+											"    pm.expect(body).to.have.property(\"Body\");",
+											"    pm.expect(body).to.have.property(\"SendTimestamp\");",
+											"    pm.expect(body).to.have.property(\"Reaction\");",
+											"    pm.expect(body).to.have.property(\"ResponseIds\");",
+											"    pm.expect(body.ResponseIds).to.be.an('array');",
+											"    pm.expect(body).to.have.property(\"Sender\");",
+											"    pm.expect(body).to.have.property(\"BranchingRoom\");",
+											"",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"messageId\": \"msg001\",\n  \"Body\":\"\",\n  \"SendTimestamp\": \"2025-11-19T01:45:00.000Z\",\n  \"Reaction\": \"❤️\", \n  \"ResponseIds\": [\"691df4bebb76d29bccff43b1\"],\n  \"Sender\": \"691deac08dd4b891109bcefe\", \n  \"BranchingRoom\": \"691de4d351d9d19b5aa34b7d\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/messages",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"messages"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check Sender",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"// Parse the request body",
+											"const raw = pm.request.body.raw;",
+											"const body = JSON.parse(raw);",
+											"",
+											"// Test that Sender is not empty",
+											"pm.test(\"Request body contains non empty Sender\", function () {",
+											"    const isEmpty = (!body.Sender || body.Sender.trim() === \"\");",
+											"    pm.environment.set(\"isSenderEmpty\", isEmpty);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Only check if sender was empty in pre-req",
+											"if (pm.environment.get(\"isSenderEmpty\") === \"true\") {",
+											"",
+											"    pm.test(\"Response status is 400 when Sender is empty\", function () {",
+											"        pm.response.to.have.status(400);",
+											"    });",
+											"",
+											"    pm.test(\"Correct error message for empty Sender\", function () {",
+											"        const res = pm.response.json();",
+											"        pm.expect(res.message).to.eql(\"Sender is required\");",
+											"    });",
+											"}",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"messageId\": \"{{randomMessageId}}\",\r\n  \"Body\": \"I am also a part of the thread\",\r\n  \"SendTimestamp\": \"2025-11-19T01:47:00.000Z\",\r\n  \"Reaction\": \"😂\",\r\n  \"ResponseIds\": [],\r\n  \"Sender\": \"\",\r\n  \"BranchingRoom\": \"{{branchingRoomObjectId}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/messages/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"messages",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check branching room",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"// Parse request body",
+											"const raw = pm.request.body.raw;",
+											"const body = JSON.parse(raw);",
+											"",
+											"// Test that BranchingRoom is not empty",
+											"pm.test(\"Request body contains non-empty BranchingRoom\", function () {",
+											"    const isEmpty = (!body.BranchingRoom || body.BranchingRoom.trim() === \"\");",
+											"    pm.environment.set(\"isBranchingEmpty\", isEmpty);",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.environment.get(\"isBranchingEmpty\") === \"true\") {",
+											"",
+											"    pm.test(\"Response status is 400 when BranchingRoom is empty\", function () {",
+											"        pm.response.to.have.status(400);",
+											"    });",
+											"",
+											"    pm.test(\"Correct error message for empty BranchingRoom\", function () {",
+											"        const res = pm.response.json();",
+											"        pm.expect(res.message).to.eql(\"BranchingRoom is required\");",
+											"    });",
+											"}",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"messageId\": \"{{randomMessageId}}\",\r\n  \"Body\": \"I am also a part of the thread\",\r\n  \"SendTimestamp\": \"2025-11-19T01:47:00.000Z\",\r\n  \"Reaction\": \"😂\",\r\n  \"ResponseIds\": [],\r\n  \"Sender\": \"{{userObjectId}}\",\r\n  \"BranchingRoom\": \"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/messages/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"messages",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Get user Messages",
+					"item": [
+						{
+							"name": "Get all messages in messages",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"status 200\", () => pm.response.to.have.status(200));",
+											"",
+											"pm.test(\"Message Collection to have a proper formate\", ()=>{",
+											"    let jsonBody = pm.response.json();",
+											"    pm.expect(jsonBody).to.have.property(\"data\");",
+											"    const dataList = jsonBody.data;",
+											"    ",
+											"    if(dataList.length !== 0){",
+											"    const dataList = jsonBody.data;",
+											"    dataList.forEach(item =>{",
+											"        pm.expect(item).to.have.property(\"_id\");",
+											"        pm.expect(item).to.have.property(\"Body\");",
+											"        pm.expect(item).to.have.property(\"Reactions\");",
+											"        pm.expect(item).to.have.property(\"messageId\");",
+											"        pm.expect(item).to.have.property(\"Sender\");",
+											"        pm.expect(item).to.have.property(\"BranchingRoom\");",
+											"",
+											"    })}",
+											"",
+											"})",
+											"",
+											"pm.test(\"Response Item should have the described fields \", ()=>{",
+											"    const queryObject = pm.request.url.query.toObject();",
+											"    console.log(queryObject);",
+											"    const fields = queryObject.fields.split(',');",
+											"    console.log(fields);",
+											"",
+											"",
+											"    const jsonResponse = pm.response.json();",
+											"    pm.expect(jsonResponse).to.have.property(\"data\");",
+											"    const jsonBody = jsonResponse.data;",
+											"    jsonBody.forEach(item => {",
+											"        fields.forEach(field => {",
+											"            pm.expect(item).to.have.property(field);",
+											"    });",
+											"",
+											"})",
+											"})",
+											"",
+											"pm.test(\"Sender Collection to have a proper formate\", ()=>{",
+											"    let jsonBody = pm.response.json();",
+											"    pm.expect(jsonBody).to.have.property(\"data\");",
+											"    pm.expect(jsonBody.data).to.be.an('array');",
+											"    const dataList = jsonBody.data;",
+											"    dataList.forEach(item =>{",
+											"        pm.expect(item).to.have.property('Sender');",
+											"        let sender = item.Sender;",
+											"        pm.expect(sender).to.have.property(\"_id\");",
+											"        pm.expect(sender).to.have.property(\"userId\");",
+											"        pm.expect(sender).to.have.property(\"personalNumber\");",
+											"        pm.expect(sender).to.have.property(\"language\");",
+											"",
+											"    })",
+											"",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/messages/?fields=Body,Reactions",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"messages",
+										""
+									],
+									"query": [
+										{
+											"key": "fields",
+											"value": "Body,Reactions"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get message by id in messages",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"packages": {},
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/v1/messages/{{randomMessageId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"messages",
+										"{{randomMessageId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get message by id in messages (not found)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"status 404\", () => pm.response.to.have.status(404));"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/v1/messages/MESSAGE223344",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"messages",
+										"MESSAGE223344"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Update Message",
+					"item": [
+						{
+							"name": "Partial update message in messages",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Test the response status code is 200",
+											"",
+											"const jsonBody = pm.response.json();",
+											" if (pm.expect(jsonBody).to.have.property(\"Object\")) {",
+											"pm.test(\"status 200\", () => {",
+											"   ",
+											"        pm.response.to.have.status(200);",
+											"        ",
+											"});",
+											"}",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.test(\"messageId variable is set\", function () {",
+											"    const messageId = pm.collectionVariables.get(\"randomMessageId\");",
+											"    pm.collectionVariables.set(\"messageId\", messageId);",
+											"    pm.expect(messageId).to.exist;",
+											"});",
+											"",
+											"// Ensure the PATCH body is not empty.",
+											"pm.test(\"PATCH body is not empty\", function () {",
+											"    const body = pm.request.body.raw.trim();",
+											"    pm.expect(body.length).to.be.above(2);",
+											"});",
+											"",
+											"pm.test(\"Reaction value is valid\", function () {",
+											"    const rawJson = pm.request.body.raw;",
+											"    const jsonBody = JSON.parse(rawJson);",
+											"",
+											"    const validReactions = ['👍', '❤️', '😂', '😢', '😡', null];",
+											"    pm.expect(jsonBody.Reaction).to.be.oneOf(validReactions);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"Reaction\": \"😡\"\n\n}"
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/v1/messages/{{messageId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"messages",
+										"{{messageId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Delete Message",
+					"item": [
+						{
+							"name": "Delete message in messages",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"",
+											"pm.test(\"messageId variable is set\", () => {",
+											"    pm.expect(pm.collectionVariables.get(\"messageId\")).to.exist;",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Test to check if the response status is 200 (OK)",
+											"pm.test(\"status 200\", () => pm.response.to.have.status(200));"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/v1/messages/{{messageId}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"messages",
+										"{{messageId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete message collection",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Status code should be 200 (OK)",
+											"pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+											"",
+											"// Response body should contain a message indicating successful deletion",
+											"pm.test(\"Contains delete confirmation\", () => {",
+											"    const res = pm.response.json();",
+											"    pm.expect(res).to.be.an(\"object\");",
+											"    pm.expect(res).to.have.property(\"message\");",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/v1/messages/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"v1",
+										"messages",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": ""
+		},
+		{
+			"key": "messageId",
+			"value": ""
+		},
+		{
+			"key": "global_id",
+			"value": ""
+		},
+		{
+			"key": "global_room_Id",
+			"value": ""
+		},
+		{
+			"key": "branchingRoomId",
+			"value": ""
+		},
+		{
+			"key": "roomTopic",
+			"value": ""
+		},
+		{
+			"key": "roomType",
+			"value": ""
+		},
+		{
+			"key": "branchingRoomObjectId",
+			"value": ""
+		},
+		{
+			"key": "RoomObjectId",
+			"value": ""
+		},
+		{
+			"key": "LocalRoomObjectId",
+			"value": ""
+		},
+		{
+			"key": "userId",
+			"value": ""
+		},
+		{
+			"key": "userObjectId",
+			"value": ""
+		},
+		{
+			"key": "randomUserId",
+			"value": ""
+		},
+		{
+			"key": "LocalRoomId",
+			"value": ""
+		},
+		{
+			"key": "RandomLocalRoomId",
+			"value": ""
+		},
+		{
+			"key": "LoclRoomId",
+			"value": ""
+		},
+		{
+			"key": "RandomGlobalRoomId",
+			"value": ""
+		},
+		{
+			"key": "GlobalRoomObjectId",
+			"value": ""
+		},
+		{
+			"key": "newuserId",
+			"value": ""
+		},
+		{
+			"key": "LocalRoomId",
+			"value": ""
+		},
+		{
+			"key": "GlobalRoomId",
+			"value": ""
+		},
+		{
+			"key": "randomBranchingRoomId",
+			"value": ""
+		},
+		{
+			"key": "randomRoomTopic",
+			"value": ""
+		},
+		{
+			"key": "branchingRoomType",
+			"value": ""
+		},
+		{
+			"key": "randomMessageId",
+			"value": ""
+		},
+		{
+			"key": "parentMessageId",
+			"value": ""
+		},
+		{
+			"key": "globalRoomId",
+			"value": ""
+		},
+		{
+			"key": "personalNumber",
+			"value": ""
+		},
+		{
+			"key": "responseMessageId",
+			"value": ""
+		},
+		{
+			"key": "responceMessageId",
+			"value": ""
+		},
+		{
+			"key": "RoomId",
+			"value": ""
+		},
+		{
+			"key": "roomId",
+			"value": ""
+		},
+		{
+			"key": "ReactionMessageId",
+			"value": ""
+		},
+		{
+			"key": "reaction",
+			"value": ""
+		}
+	]
+}
